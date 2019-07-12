@@ -9,7 +9,8 @@ import (
 	"time"
 )
 
-var gMod, iBase, scr uint8
+var gMod, iBase uint8
+var scr uint16
 var clear map[string]func() //create a map for storing clear funcs
 
 func init() {
@@ -111,7 +112,7 @@ func dolan(sMode string, mN uint8) {
 					fmt.Println("My number is :", rN)
 					fmt.Print("Press enter for next number...")
 					fmt.Scanln()
-					scr += cr + lV
+					scr += uint16(cr + lV)
 					break
 				}
 				if rN > a {
@@ -128,15 +129,24 @@ func dolan(sMode string, mN uint8) {
 		fmt.Println("")
 		c--
 	}
+
+	stt(sMode, scr, 0, 0, 0, "")
+	wEnt()
 }
 
-func stt(sttM string, sttS, sttL uint8, sttQ uint8, sttC uint8, sttHsl string) {
+func stt(sttM string, sttS uint16, sttL uint8, sttQ uint8, sttC uint8, sttHsl string) {
 	hdr()
 	fmt.Println("Mode :", sttM)
 	fmt.Println("Score :", sttS)
-	fmt.Println("Level :", sttL)
-	fmt.Println("Question :", sttQ)
-	fmt.Println("Chance :", sttC)
+	if sttL > 0 {
+		fmt.Println("Level :", sttL)
+	}
+	if sttQ > 0 {
+		fmt.Println("Question :", sttQ)
+	}
+	if sttC > 0 {
+		fmt.Println("Chance :", sttC)
+	}
 	fmt.Println("")
 	if sttHsl != "" {
 		fmt.Println(sttHsl)
@@ -153,10 +163,10 @@ func hdr() {
 
 func dsclm() {
 	hdr()
-	fmt.Println("many thanks for oguy who teach me basic programing back at 2006")
+	fmt.Println("many thanks for oguy who teach me basic programing")
+	fmt.Println("back at 2006")
 	fmt.Println("")
-	fmt.Print("Press enter to continue...")
-	fmt.Scanln()
+	wEnt()
 	cClear()
 }
 
@@ -177,7 +187,11 @@ func intro() {
 	fmt.Println("level 10 : 1 chance")
 	fmt.Println("you get 10 point score if you guess at first chance")
 	fmt.Println("")
+	wEnt()
+	cClear()
+}
+
+func wEnt() {
 	fmt.Print("Press enter to continue...")
 	fmt.Scanln()
-	cClear()
 }
