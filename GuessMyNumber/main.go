@@ -9,8 +9,6 @@ import (
 	"time"
 )
 
-var gMod, iBase uint8
-var scr uint16
 var clear map[string]func() //create a map for storing clear funcs
 
 func init() {
@@ -37,9 +35,6 @@ func cClear() {
 }
 
 func main() {
-	iBase = 25
-	scr = 0
-
 	intro()
 	gameBoard()
 }
@@ -51,6 +46,7 @@ func rcvr() {
 }
 
 func gameBoard() {
+	var gMod uint8
 	defer rcvr()
 
 	hdr()
@@ -67,13 +63,13 @@ func gameBoard() {
 
 	switch gMod {
 	case 1:
-		dolan("Easy", gMod)
+		dolan("Easy", &gMod)
 	case 2:
-		dolan("Medium", gMod)
+		dolan("Medium", &gMod)
 	case 3:
-		dolan("Hard", gMod)
+		dolan("Hard", &gMod)
 	case 4:
-		dolan("Extreme", gMod)
+		dolan("Extreme", &gMod)
 	case 9:
 		fmt.Println("bye!")
 		os.Exit(0)
@@ -84,25 +80,33 @@ func gameBoard() {
 	panic("I am panicking!")
 }
 
-func dolan(sMode string, mN uint8) {
-	var lV, q, cr, rN, i, c, a uint8
+func dolan(sMode string, mN *uint8) {
+	var lV, q, rN, i, c, a, zr, iBase uint8
+	var scr uint16
+	zr = 0
+	iBase = 25
+	scr = uint16(zr)
 	c = 10
+	hsl := ""
 
 	for lV = 0; lV < 10; lV++ {
 		for q = 0; q < 3; q++ {
 			rndS := rand.NewSource(time.Now().UnixNano())
 			rnd := rand.New(rndS)
-			cr = c
-			hsl := ""
-			rN = uint8(rnd.Intn(int(iBase * mN)))
+			cr := c
+			rN = uint8(rnd.Intn(int(iBase * *mN)))
 
 			for rN < 1 {
-				rN = uint8(rnd.Intn(int(iBase * mN)))
+				rN = uint8(rnd.Intn(int(iBase * *mN)))
 			}
 
 			for i = 0; i < c; i++ {
-				stt(sMode, scr, lV+1, q+1, cr, hsl)
+				lvl := lV + 1
+				qs := q + 1
+				stt(&sMode, &hsl, &scr, &lvl, &qs, &cr)
+				hsl = ""
 
+				//fmt.Println("rNum : ", rN)
 				fmt.Print("Your guess : ")
 				fmt.Scanln(&a)
 
@@ -126,30 +130,29 @@ func dolan(sMode string, mN uint8) {
 			}
 		}
 
-		fmt.Println("")
 		c--
 	}
 
-	stt(sMode, scr, 0, 0, 0, "")
+	stt(&sMode, &hsl, &scr, &zr, &zr, &zr)
 	wEnt()
 }
 
-func stt(sttM string, sttS uint16, sttL uint8, sttQ uint8, sttC uint8, sttHsl string) {
+func stt(sttM, sttHsl *string, sttS *uint16, sttL, sttQ, sttC *uint8) {
 	hdr()
-	fmt.Println("Mode :", sttM)
-	fmt.Println("Score :", sttS)
-	if sttL > 0 {
-		fmt.Println("Level :", sttL)
+	fmt.Println("Mode :", *sttM)
+	fmt.Println("Score :", *sttS)
+	if *sttL > 0 {
+		fmt.Println("Level :", *sttL)
 	}
-	if sttQ > 0 {
-		fmt.Println("Question :", sttQ)
+	if *sttQ > 0 {
+		fmt.Println("Question :", *sttQ)
 	}
-	if sttC > 0 {
-		fmt.Println("Chance :", sttC)
+	if *sttC > 0 {
+		fmt.Println("Chance :", *sttC)
 	}
 	fmt.Println("")
-	if sttHsl != "" {
-		fmt.Println(sttHsl)
+	if *sttHsl != "" {
+		fmt.Println(*sttHsl)
 	}
 }
 
@@ -165,7 +168,6 @@ func dsclm() {
 	hdr()
 	fmt.Println("many thanks for oguy who teach me basic programing")
 	fmt.Println("back at 2006")
-	fmt.Println("")
 	wEnt()
 	cClear()
 }
@@ -186,12 +188,12 @@ func intro() {
 	fmt.Println("level 1 : 10 chance")
 	fmt.Println("level 10 : 1 chance")
 	fmt.Println("you get 10 point score if you guess at first chance")
-	fmt.Println("")
 	wEnt()
 	cClear()
 }
 
 func wEnt() {
+	fmt.Println("")
 	fmt.Print("Press enter to continue...")
 	fmt.Scanln()
 }
